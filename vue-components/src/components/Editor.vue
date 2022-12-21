@@ -42,15 +42,12 @@ export default {
     },
     language(lang) {
       if (this.editor) {
-        console.log("update language", lang);
-        console.log(Object.keys(this.editor));
-        // this.editor.setModelLanguage(this.editor.getModel(), lang);
+        monaco.editor.setModelLanguage(this.editor.getModel(), lang);
       }
     },
     theme(theme) {
       if (this.editor) {
-        console.log("update theme", theme);
-        // this.editor.setTheme(theme);
+        this.editor.updateOptions({ theme });
       }
     },
   },
