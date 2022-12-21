@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "vue-cli-service build --target lib --name trame_code --filename vue-trame_code src/use.js",
+    "build": "NODE_OPTIONS=--max_old_space_size=4096 vue-cli-service build --target lib --name trame_code --filename vue-trame_code src/use.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
