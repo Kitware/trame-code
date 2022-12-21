@@ -1,4 +1,3 @@
-import os
 from trame.app import get_server
 from trame.ui.vuetify import SinglePageWithDrawerLayout
 from trame.widgets import vuetify, code
