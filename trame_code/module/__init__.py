@@ -7,7 +7,7 @@ serve_path = str(Path(__file__).with_name("serve").resolve())
 serve = {"__trame_code": serve_path}
 
 # List of JS files to load (usually from the serve path above)
-scripts = ["__trame_code/vue-trame_code.umd.min.js"]
+scripts = ["__trame_code/vue-trame_code.umd.js"]
 
 # List of CSS files to load (usually from the serve path above)
 styles = ["__trame_code/vue-trame_code.css"]

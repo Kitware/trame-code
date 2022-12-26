@@ -1,9 +1,10 @@
-<template>
-  <div class="container"></div>
-</template>
-
-<script>
 import * as monaco from "monaco-editor";
+
+import { connectToLanguageServers } from "./language-servers";
+
+// vscode must be imported before starting the first editor
+// see: https://github.com/TypeFox/monaco-languageclient/issues/412#issuecomment-1227347426
+import "vscode";
 
 export default {
   name: "VSEditor",
@@ -15,7 +16,7 @@ export default {
     options: {
       type: Object,
       default: () => ({
-        language: "python",
+        language: "moose",
         lineNumbers: "on",
         theme: "vs-dark",
       }),
@@ -32,6 +33,7 @@ export default {
   watch: {
     value(v) {
       if (this.editor) {
+        console.log("value changed");
         this.editor.setValue(v);
       }
     },
@@ -57,24 +59,22 @@ export default {
       value: this.value,
       language: this.language,
       theme: this.theme,
+      model: monaco.editor.createModel(
+        this.value,
+        this.language,
+      ),
+      automaticLayout: true,
       ...this.options,
     });
 
     this.editor.onDidChangeModelContent(() =>
       this.$emit("input", this.editor.getValue())
     );
+
+    // Connect to the language servers
+    connectToLanguageServers(monaco);
   },
   beforeDestroy() {
     this.editor.dispose();
   },
 };
-</script>
-
-<style scoped>
-.container {
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  margin: 0;
-}
-</style>

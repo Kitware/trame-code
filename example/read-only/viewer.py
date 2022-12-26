@@ -37,17 +37,25 @@ def update_tree(base_path):
 
 
 def load_file(full_paths):
-    if full_paths:
-        item = Path(full_paths[0])
-        if item.is_file():
-            if item.name.endswith(".py"):
-                state.editor_lang = "python"
-            else:
-                state.editor_lang = "plaintext"
+    if not full_paths:
+        return
 
-            with open(item) as content:
-                state.editor_content = content.read()
+    item = Path(full_paths[0])
+    if not item.is_file():
+        return
 
+    known_extensions = {
+        ".py": "python",
+        ".ts": "typescript",
+        ".cpp": "cpp",
+        ".i": "moose",
+        ".txt": "cmake",
+    }
+
+    state.editor_lang = known_extensions.get(item.suffix, "moose")
+
+    with open(item) as content:
+        state.editor_content = content.read()
 
 # -----------------------------------------------------------------------------
 # GUI
@@ -63,7 +71,7 @@ with SinglePageWithDrawerLayout(server) as layout:
         vuetify.VSpacer()
         vuetify.VSelect(
             v_model=("editor_lang", "plaintext"),
-            items=("editor_langs", ["plaintext", "python", "javascript", "html"]),
+            items=("editor_langs", ["plaintext", "python", "javascript", "typescript", "cpp", "html", "moose", "cmake"]),
             dense=True,
             hide_details=True,
             style="max-width: 150px;",
@@ -91,7 +99,7 @@ with SinglePageWithDrawerLayout(server) as layout:
                 style="width: 100%",
                 value=("editor_content", ""),
                 options=("editor_options", {}),
-                language=("editor_lang", "plaintext"),
+                language=("editor_lang", "moose"),
                 theme=("editor_theme", "vs-dark"),
             )
 
