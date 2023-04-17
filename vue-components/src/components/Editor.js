@@ -1,10 +1,9 @@
-<template>
-  <div class="container"></div>
-</template>
-
-<script>
+import "../utils/monacoEnv";
 import * as monaco from "monaco-editor";
 
+// ----------------------------------------------------------------------------
+// Vue widget
+// ----------------------------------------------------------------------------
 export default {
   name: "VSEditor",
   props: {
@@ -64,17 +63,8 @@ export default {
       this.$emit("input", this.editor.getValue())
     );
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.editor.dispose();
   },
+  template: `<div style="width: 100%;height: 100%;padding: 0;margin: 0;"></div>`,
 };
-</script>
-
-<style scoped>
-.container {
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  margin: 0;
-}
-</style>
