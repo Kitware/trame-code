@@ -1,28 +1,31 @@
 {
-  "name": "vue-components",
-  "version": "0.1.0",
+  "name": "trame-code",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "NODE_OPTIONS=--max_old_space_size=4096 vue-cli-service build --target lib --name trame_code --filename vue-trame_code src/use.js",
-    "lint": "vue-cli-service lint"
+    "dev": "vite",
+    "build": "vite build --emptyOutDir",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore --ignore-pattern public",
+    "semantic-release": "semantic-release",
+    "buildOLD": "NODE_OPTIONS=--max_old_space_size=4096 vue-cli-service build --target lib --name trame_code --filename vue-trame_code src/use.js"
   },
   "dependencies": {
-    "monaco-editor": "0.34.1",
-    "core-js": "^3.8.3",
-    "vue": "^2.6.14"
+    "monaco-editor": "0.37.1",
+    "vscode-oniguruma": "1.7.0",
+    "vscode-textmate": "9.0.0"
+  },
+  "peerDependencies": {
+    "vue": "^2.7.0 || >=3.0.0"
   },
   "devDependencies": {
-    "monaco-editor-webpack-plugin": "7.0.1",
-    "@babel/core": "^7.12.16",
-    "@babel/eslint-parser": "^7.12.16",
-    "@vue/cli-plugin-babel": "~5.0.0",
-    "@vue/cli-plugin-eslint": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-vue": "^8.0.3",
-    "prettier": "^2.4.1",
-    "vue-template-compiler": "^2.6.14"
+    "@rushstack/eslint-patch": "^1.1.4",
+    "@vue/eslint-config-prettier": "^7.0.0",
+    "eslint": "^8.33.0",
+    "eslint-plugin-vue": "^9.3.0",
+    "prettier": "^2.7.1",
+    "semantic-release": "19.0.2",
+    "vite": "^4.1.0",
+    "vite-plugin-monaco-editor": "1.1.0",
+    "vue": "^3.0.0"
   }
 }
