@@ -1,0 +1,1 @@
+The files are mainly coming from https://github.com/microsoft/vscode/tree/main/extensions/theme-defaults/themes

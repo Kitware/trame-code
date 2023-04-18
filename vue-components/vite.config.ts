@@ -1,8 +1,6 @@
-import { defineConfig } from 'vite';
 import monacoEditorPlugin from 'vite-plugin-monaco-editor';
-const DST_PATH = "../trame_code/module/serve";
 
-export default defineConfig({
+export default {
   plugins: [
     monacoEditorPlugin({globalAPI: true}),
   ],
@@ -11,7 +9,7 @@ export default defineConfig({
     lib: {
       entry: "./src/use.js",
       name: "trame_code",
-      format: "umd",
+      formats: ["umd"],
       fileName: "trame-code",
     },
     rollupOptions: {
@@ -22,7 +20,8 @@ export default defineConfig({
         },
       },
     },
-    outDir: DST_PATH,
+    outDir: "../trame_code/module/serve",
     assetsDir: ".",
+    // sourcemap: true,
   },
-});
+};

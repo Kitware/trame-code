@@ -1,13 +1,17 @@
-import onigWasm from "vscode-oniguruma/release/onig.wasm?init";
+import wasmURL from "vscode-oniguruma/release/onig.wasm?url";
 import {
   createOnigScanner,
   createOnigString,
   loadWASM,
 } from "vscode-oniguruma";
 
-await loadWASM({ instantiator: onigWasm, print: console.log });
-
-export const onigLib = Promise.resolve({
-  createOnigScanner,
-  createOnigString,
+export const onigLib = new Promise((resolve) => {
+  fetch(wasmURL).then((response) => {
+    loadWASM(response).then(() => {
+      resolve({
+        createOnigScanner,
+        createOnigString,
+      });
+    });
+  });
 });

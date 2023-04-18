@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --emptyOutDir",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore --ignore-pattern public",
     "semantic-release": "semantic-release",
     "buildOLD": "NODE_OPTIONS=--max_old_space_size=4096 vue-cli-service build --target lib --name trame_code --filename vue-trame_code src/use.js"

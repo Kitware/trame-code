@@ -21,6 +21,7 @@ class Editor(HtmlElement):
             "value",
             "theme",
             "language",
+            "textmate",
         ]
         self._event_names += [
             "input",

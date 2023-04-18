@@ -1,3 +1,9 @@
+import {
+  getTextMateTheme,
+  registerTextMateAlias,
+  registerTextMateTheme,
+} from "../themes";
+
 const URL_MAPPER = {};
 const LABEL_MAPPER = {
   json: "json",
@@ -30,8 +36,15 @@ function updateUrlMapper(key, value) {
   URL_MAPPER[key] = value;
 }
 
-self.MonacoEnvironment = {
+export const MonacoEnvironment = {
   updateLabelMapper,
   updateUrlMapper,
   getWorker,
+  // TextMate helper
+  getTextMateTheme,
+  registerTextMateTheme,
+  registerTextMateAlias,
 };
+
+// Expose publicly
+self.MonacoEnvironment = MonacoEnvironment;

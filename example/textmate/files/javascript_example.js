@@ -17,8 +17,11 @@ export class SimpleLanguageInfoProvider {
     this.grammars = grammars;
     this.monaco = monaco;
 
+    console.log("Theme", theme);
+    console.log("Theme-data", MonacoEnvironment.getThemeColors(theme));
+
     this.registry = new Registry({
-      theme: MonacoEnvironment.getTextMateTheme(theme),
+      theme: MonacoEnvironment.getThemeColors(theme),
       onigLib,
 
       async loadGrammar(scopeName) {
@@ -39,17 +42,12 @@ export class SimpleLanguageInfoProvider {
     this.tokensProviderCache = new TokensProviderCache(this.registry);
   }
 
-  updateTheme(themeName) {
-    this.registry.setTheme(MonacoEnvironment.getTextMateTheme(themeName));
-    this.injectCSS();
-  }
-
   injectCSS() {
     const cssColors = this.registry.getColorMap();
     const colorMap = cssColors.map(Color.Format.CSS.parseHex);
     TokenizationRegistry.setColorMap(colorMap);
     const css = generateTokensCSSForColorMap(colorMap);
-    const style = createStyleElementForColorsCSS("textmateStyle");
+    const style = createStyleElementForColorsCSS();
     style.innerHTML = css;
   }
 
@@ -130,14 +128,8 @@ class TokensProviderCache {
   }
 }
 
-function createStyleElementForColorsCSS(selector) {
-  const existingStyle = document.querySelector(`.${selector}`);
-  if (existingStyle) {
-    return existingStyle;
-  }
-
+function createStyleElementForColorsCSS() {
   const style = document.createElement("style");
-  style.classList.add(selector);
   const monacoColors = document.getElementsByClassName("monaco-colors")[0];
   if (monacoColors) {
     monacoColors.parentElement?.insertBefore(style, monacoColors.nextSibling);

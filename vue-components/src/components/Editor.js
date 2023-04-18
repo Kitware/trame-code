@@ -1,9 +1,11 @@
 import "../utils/monacoEnv";
+import {
+  SimpleLanguageInfoProvider,
+  registerLanguages,
+} from "../utils/textmate";
+
 import * as monaco from "monaco-editor";
 
-// ----------------------------------------------------------------------------
-// Vue widget
-// ----------------------------------------------------------------------------
 export default {
   name: "VSEditor",
   props: {
@@ -27,6 +29,9 @@ export default {
       type: String,
       default: "vs-dark",
     },
+    textmate: {
+      type: Object,
+    },
   },
   watch: {
     value(v) {
@@ -48,16 +53,64 @@ export default {
       if (this.editor) {
         this.editor.updateOptions({ theme });
       }
+      if (this.provider) {
+        this.provider.updateTheme(theme);
+      }
+    },
+    textmate(config) {
+      if (config) {
+        const { languages, grammars, configs } = config;
+        this.registerTextmateLanguageDefinitions(
+          languages,
+          grammars,
+          configs,
+          true
+        );
+      }
     },
   },
-  methods: {},
+  methods: {
+    registerTextmateLanguageDefinitions(languages, grammars, configs, inject) {
+      this.provider = new SimpleLanguageInfoProvider({
+        monaco,
+        grammars,
+        configs,
+        theme: this.theme,
+      });
+
+      registerLanguages(
+        languages,
+        (v) => this.provider.fetchLanguageInfo(v),
+        monaco
+      );
+      if (inject) {
+        this.provider.injectCSS();
+      }
+
+      return this.provider;
+    },
+  },
   mounted() {
+    let provider = null;
+    if (this.textmate) {
+      provider = this.registerTextmateLanguageDefinitions(
+        this.textmate.languages,
+        this.textmate.grammars,
+        this.textmate.configs,
+        false
+      );
+    }
+
     this.editor = monaco.editor.create(this.$el, {
       value: this.value,
       language: this.language,
       theme: this.theme,
       ...this.options,
     });
+
+    if (provider) {
+      provider.injectCSS();
+    }
 
     this.editor.onDidChangeModelContent(() =>
       this.$emit("input", this.editor.getValue())
