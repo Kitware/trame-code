@@ -5,11 +5,15 @@ trame-code
 Widget for Monaco VS code editor for trame
 
 
-* Free software: MIT License
+License
+-----------------------------------------------------------
+
+This library is distributed under the MIT License (Same as monaco/vscode-editor)
 
 
-Installing
-----------
+Development
+-----------------------------------------------------------
+
 Build and install the Vue components
 
 .. code-block:: console
@@ -19,15 +23,8 @@ Build and install the Vue components
     npm run build
     cd -
 
-Install the application
+Install the python library
 
 .. code-block:: console
 
     pip install -e .
-
-
-
-Features
---------
-
-* TODO
