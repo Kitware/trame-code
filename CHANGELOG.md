@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v1.0.0 (2023-04-19)
+### Feature
+* **release:** Official release ([`080923c`](https://github.com/Kitware/trame-code/commit/080923c5ad7343dac65e192902947ed08f761f57))
+
+### Breaking
+* Just making that library official now that it vue2/3 compatible ([`080923c`](https://github.com/Kitware/trame-code/commit/080923c5ad7343dac65e192902947ed08f761f57))
+
 ## v0.1.0 (2023-04-18)
 ### Feature
 * **textmate:** Handle textmate format ([`83cfb97`](https://github.com/Kitware/trame-code/commit/83cfb97110296afa5fbfd31a2d66a4c8dc9810d1))
