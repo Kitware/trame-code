@@ -93,7 +93,7 @@ with SinglePageWithDrawerLayout(server) as layout:
             editor = code.Editor(
                 style="width: 100%",
                 value=("editor_content", ""),
-                options=("editor_options", {}),
+                options=("editor_options", {"automaticLayout": True}),
                 language=("editor_lang", "plaintext"),
                 theme=("editor_theme", "vs-dark"),
                 textmate=("editor_textmate", None),
