@@ -43,7 +43,7 @@ def load_file(lang, file_path):
 # Textmate grammar definition
 # -----------------------------------------------------------------------------
 
-state.editor_textmate = langs.to_dict()
+state.editor_textmate = langs.ALL_LANGS
 
 # -----------------------------------------------------------------------------
 # GUI
