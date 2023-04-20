@@ -10,12 +10,11 @@
     "buildOLD": "NODE_OPTIONS=--max_old_space_size=4096 vue-cli-service build --target lib --name trame_code --filename vue-trame_code src/use.js"
   },
   "dependencies": {
-    "monaco-editor": "0.37.1",
-    "monaco-languageclient": "4.0.1",
-    "normalize-url": "^8.0.0",
+    "monaco-editor": "0.36.1",
+    "monaco-languageclient": "5.0.1",
     "vscode-oniguruma": "1.7.0",
-    "vscode-textmate": "9.0.0",
-    "vscode-ws-jsonrpc": "^2.0.1"
+    "vscode-languageclient": "8.1.0",
+    "vscode-textmate": "9.0.0"
   },
   "peerDependencies": {
     "vue": "^2.7.0 || >=3.0.0"

@@ -1,20 +1,16 @@
-import "../utils/monacoEnv";
-import { listen } from "vscode-ws-jsonrpc";
-import { WSLinkWebSocket } from "../utils/wslink";
-import {
-  SimpleLanguageInfoProvider,
-  registerLanguages,
-} from "../utils/textmate";
-
-import {
-  MonacoServices,
-  MonacoLanguageClient,
-  createConnection,
-  CloseAction,
-  ErrorAction,
-} from "monaco-languageclient";
+// Reference implementation for language-server:
+// => https://github.com/TypeFox/monaco-languageclient/blob/main/packages/examples/main/src/client/main.ts
 
 import * as monaco from "monaco-editor";
+import { MonacoServices } from "monaco-languageclient";
+import { StandaloneServices } from "vscode/services";
+
+import "../utils/monacoEnv";
+import { WSLinkWebSocket } from "../utils/wslink";
+import { createLanguageClient } from "../utils/langServer";
+import { LanguageProvider, registerLanguages } from "../utils/textmate";
+
+StandaloneServices.initialize();
 
 export default {
   name: "VSEditor",
@@ -86,7 +82,7 @@ export default {
   },
   methods: {
     registerTextmateLanguageDefinitions(languages, grammars, configs, inject) {
-      this.provider = new SimpleLanguageInfoProvider({
+      this.provider = new LanguageProvider({
         monaco,
         grammars,
         configs,
@@ -117,48 +113,15 @@ export default {
     }
 
     if (this.languageServers?.length) {
-      const masterWS = WSLinkWebSocket(this.trame);
-      MonacoServices.install(monaco);
+      MonacoServices.install();
+      const masterWS = new WSLinkWebSocket(this.trame);
 
       // Create LanguageClient per language server
       for (let i = 0; i < this.languageServers.length; i++) {
         const langId = this.languageServers[i];
-        const webSocket = masterWS.createLanguageWS(langId);
-        listen({
-          webSocket,
-          onConnection: (connection) => {
-            const languageClient = new MonacoLanguageClient({
-              name: `lang-client-${langId}`,
-              clientOptions: {
-                documentSelector: [langId],
-                errorHandler: {
-                  error: () => ErrorAction.Continue,
-                  closed: () => CloseAction.Restart,
-                },
-              },
-
-              connectionProvider: {
-                get(errorHandler, closeHandler) {
-                  return Promise.resolve(
-                    createConnection(connection, errorHandler, closeHandler)
-                  );
-                },
-              },
-            });
-            const disposable = languageClient.start();
-
-            connection.onClose(function () {
-              return disposable.dispose();
-            });
-
-            connection.onError(function (error) {
-              console.log(error);
-            });
-          },
-        });
+        const langIO = masterWS.createLanguageIO(langId);
+        createLanguageClient(langIO);
       }
-
-      masterWS.connectToLangServer();
     }
 
     this.editor = monaco.editor.create(this.$el, {

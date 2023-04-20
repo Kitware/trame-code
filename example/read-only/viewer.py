@@ -14,19 +14,19 @@ state, ctrl = server.state, server.controller
 # Set up language servers
 LANGUAGE_SERVERS = [
     {
-      "id": "typescript",
-      "extensions": [".ts"],
-      "aliases": ["TypeScript", "ts", "TS", "Typescript", "typescript"],
+        "id": "typescript",
+        "extensions": [".ts"],
+        "aliases": ["TypeScript", "ts", "TS", "Typescript", "typescript"],
     },
     {
-      "id": "moose",
-      "extensions": [".i"],
-      "aliases": ["MOOSE", "Moose", "moose"],
+        "id": "moose",
+        "extensions": [".i"],
+        "aliases": ["MOOSE", "Moose", "moose"],
     },
     {
-      "id": "cmake",
-      "extensions": [".cmake", "CMakeLists.txt"],
-      "aliases": ["CMAKE", "CMake", "cmake"],
+        "id": "cmake",
+        "extensions": [".cmake", "CMakeLists.txt"],
+        "aliases": ["CMAKE", "CMake", "cmake"],
     },
     # The C++ language servers cause us some issues
     # {
@@ -35,9 +35,9 @@ LANGUAGE_SERVERS = [
     #   "aliases": ["C++", "c++", "cpp", "cxx"],
     # },
     {
-      "id": "python",
-      "extensions": [".py"],
-      "aliases": ["Python", "python", "py"],
+        "id": "python",
+        "extensions": [".py"],
+        "aliases": ["Python", "python", "py"],
     },
 ]
 
@@ -123,7 +123,7 @@ with SinglePageWithDrawerLayout(server) as layout:
                 options=("editor_options", {}),
                 language=("editor_lang", "plaintext"),
                 theme=("editor_theme", "vs-dark"),
-                language_servers=("language_servers", LANGUAGE_SERVERS),
+                # language_servers=("language_servers", LANGUAGE_SERVERS),
             )
 
 
