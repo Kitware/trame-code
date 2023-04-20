@@ -11,8 +11,11 @@
   },
   "dependencies": {
     "monaco-editor": "0.37.1",
+    "monaco-languageclient": "4.0.1",
+    "normalize-url": "^8.0.0",
     "vscode-oniguruma": "1.7.0",
-    "vscode-textmate": "9.0.0"
+    "vscode-textmate": "9.0.0",
+    "vscode-ws-jsonrpc": "2.0.1"
   },
   "peerDependencies": {
     "vue": "^2.7.0 || >=3.0.0"

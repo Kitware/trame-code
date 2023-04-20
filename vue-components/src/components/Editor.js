@@ -4,6 +4,8 @@ import {
   registerLanguages,
 } from "../utils/textmate";
 
+import { connectToLanguageServer } from "./language-servers";
+
 import * as monaco from "monaco-editor";
 
 export default {
@@ -31,6 +33,10 @@ export default {
     },
     textmate: {
       type: Object,
+    },
+    languageServers: {
+      type: Array,
+      default: () => [],
     },
   },
   watch: {
@@ -89,6 +95,9 @@ export default {
 
       return this.provider;
     },
+    registerLanguageServer(language) {
+      connectToLanguageServer(language, monaco);
+    },
   },
   mounted() {
     let provider = null;
@@ -115,6 +124,10 @@ export default {
     this.editor.onDidChangeModelContent(() =>
       this.$emit("input", this.editor.getValue())
     );
+
+    for (let i = 0; i < this.languageServers.length; i++) {
+      this.registerLanguageServer(this.languageServers[i]);
+    }
   },
   beforeUnmount() {
     this.editor.dispose();

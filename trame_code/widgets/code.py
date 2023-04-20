@@ -22,7 +22,11 @@ class Editor(HtmlElement):
             "theme",
             "language",
             "textmate",
+            ("language_servers", ":languageServers"),
         ]
         self._event_names += [
             "input",
         ]
+
+    def register_language_server(self, language):
+        self.server.js_call(self.__ref, "registerLanguageServer", language)

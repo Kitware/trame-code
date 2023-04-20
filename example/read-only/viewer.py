@@ -11,6 +11,36 @@ from pathlib import Path
 server = get_server()
 state, ctrl = server.state, server.controller
 
+# Set up language servers
+LANGUAGE_SERVERS = [
+    {
+      "id": "typescript",
+      "extensions": [".ts"],
+      "aliases": ["TypeScript", "ts", "TS", "Typescript", "typescript"],
+    },
+    {
+      "id": "moose",
+      "extensions": [".i"],
+      "aliases": ["MOOSE", "Moose", "moose"],
+    },
+    {
+      "id": "cmake",
+      "extensions": [".cmake", "CMakeLists.txt"],
+      "aliases": ["CMAKE", "CMake", "cmake"],
+    },
+    # The C++ language servers cause us some issues
+    # {
+    #   "id": "cpp",
+    #   "extensions": [".cpp", ".cxx", ".C", ".CC", ".cc"],
+    #   "aliases": ["C++", "c++", "cpp", "cxx"],
+    # },
+    {
+      "id": "python",
+      "extensions": [".py"],
+      "aliases": ["Python", "python", "py"],
+    },
+]
+
 
 def path_to_node(path_item, node_map):
     _id = str(path_item.absolute())
@@ -93,6 +123,7 @@ with SinglePageWithDrawerLayout(server) as layout:
                 options=("editor_options", {}),
                 language=("editor_lang", "plaintext"),
                 theme=("editor_theme", "vs-dark"),
+                language_servers=("language_servers", LANGUAGE_SERVERS),
             )
 
 
