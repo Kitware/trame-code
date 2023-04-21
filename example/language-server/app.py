@@ -1,3 +1,5 @@
+import asyncio
+
 from trame.app import get_server
 from trame.ui.vuetify import SinglePageWithDrawerLayout
 from trame.widgets import vuetify, code
@@ -37,13 +39,67 @@ def load_file(lang, file_path):
 # Adhoc Language Server binding
 # -----------------------------------------------------------------------------
 
+proc = None
+async def run(cmd, *args):
+    global proc
+    proc = await asyncio.create_subprocess_exec(
+        cmd,
+        *args,
+        stdin=asyncio.subprocess.PIPE,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+
+    async def handle_stdout():
+        async for data in proc.stdout:
+            length_prefix = b'Content-Length: '
+            if data.startswith(length_prefix):
+                # Read the content length
+                content_length = int(data[len(length_prefix):])
+
+                # Skip over all other headers
+                full_message = data
+                line = data
+                while line and line.strip():
+                    line = await proc.stdout.readline()
+                    full_message += line
+
+                # Read the content
+                content = await proc.stdout.read(content_length)
+                full_message += content
+
+                print(f'RECEIVE: {full_message}\n')
+                ctrl.lang_server_response('python', content.decode())
+
+    async def handle_stderr():
+        async for data in proc.stderr:
+            print('Stderr from language server:', data.decode())
+
+    loop = asyncio.get_event_loop()
+    stdout_task = loop.create_task(handle_stdout())
+    stderr_task = loop.create_task(handle_stderr())
+
+    await proc.wait()
+
+    stdout_task.cancel()
+    stderr_task.cancel()
+
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
+loop.create_task(run('pylsp'))
+
 
 @ctrl.set("lang_server_request")
 def forward_to_lang_server(language_id, action, payload):
     print("-" * 60)
     print(f"LANG({language_id}) - {action}")
-    print(payload)
+    # print(payload)
     print("-" * 60)
+    if proc is not None:
+        payload = payload.encode()
+        prefix = f'Content-Length: {len(payload)}\r\n\r\n'.encode()
+        print(f'SEND: {prefix + payload}\n')
+        proc.stdin.write(prefix + payload)
     # ctrl.lang_server_response(language_id, response_payload)
 
 
@@ -98,7 +154,8 @@ with SinglePageWithDrawerLayout(server) as layout:
                 options=("editor_options", {"automaticLayout": True}),
                 language=("editor_lang", "plaintext"),
                 theme=("editor_theme", "vs-dark"),
-                language_servers="['python', 'moose', 'cmake']",
+                language_servers="['python']",
+                # language_servers="['python', 'moose', 'cmake']",
             )
 
 
