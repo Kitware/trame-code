@@ -8,21 +8,21 @@ export function connectToLanguageServers(monaco)
   // Note: the id must match the language server proxy path,
   // and it must also match the id that is assigned in Python.
   const languages = [
-    {
-      id: "typescript",
-      extensions: [".ts"],
-      aliases: ["TypeScript", "ts", "TS", "Typescript", "typescript"],
-    },
-    {
-      id: "moose",
-      extensions: [".i"],
-      aliases: ["MOOSE", "Moose", "moose"],
-    },
-    {
-      id: "cmake",
-      extensions: [".cmake", "CMakeLists.txt"],
-      aliases: ["CMAKE", "CMake", "cmake"],
-    },
+    // {
+    //   id: "typescript",
+    //   extensions: [".ts"],
+    //   aliases: ["TypeScript", "ts", "TS", "Typescript", "typescript"],
+    // },
+    // {
+    //   id: "moose",
+    //   extensions: [".i"],
+    //   aliases: ["MOOSE", "Moose", "moose"],
+    // },
+    // {
+    //   id: "cmake",
+    //   extensions: [".cmake", "CMakeLists.txt"],
+    //   aliases: ["CMAKE", "CMake", "cmake"],
+    // },
     // The C++ language servers cause us some issues
     // {
     //   id: "cpp",
