@@ -3,6 +3,7 @@ import { CloseAction, ErrorAction } from "vscode-languageclient";
 
 export function createLanguageClient(langIO) {
   langIO.client = new MonacoLanguageClient({
+    id: langIO.language,
     name: langIO.language,
     clientOptions: {
       documentSelector: [langIO.language],

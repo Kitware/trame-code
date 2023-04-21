@@ -1,6 +1,6 @@
 class ReaderWriter {
   constructor(language, parent) {
-    console.log("lang::new", language);
+    // console.log("lang::new", language);
     this.language = language;
     this.parent = parent;
     this.callback = null;
@@ -10,12 +10,12 @@ class ReaderWriter {
   }
 
   listen(callback) {
-    console.log("lang::listen");
+    // console.log("lang::listen");
     this.callback = callback;
   }
 
   onmessage(msg) {
-    console.log("lang::onmessage", msg);
+    // console.log("lang::onmessage", msg);
     try {
       const data = JSON.parse(msg);
       this.callback(data);
@@ -24,8 +24,8 @@ class ReaderWriter {
     }
   }
 
-  write(msg) {
-    console.log("lang::write", msg);
+  async write(msg) {
+    // console.log("lang::write");
     const content = JSON.stringify(msg);
     this.parent.trame.trigger("trame_code_lang_server", [
       this.language,
@@ -50,7 +50,7 @@ class ReaderWriter {
 
 export class WSLinkWebSocket {
   constructor(trame) {
-    console.log("new WSLinkWebSocket", !!trame);
+    // console.log("new WSLinkWebSocket", !!trame);
     this.trame = trame;
     this.isopen = false;
     this.languagesIO = {};
@@ -60,7 +60,7 @@ export class WSLinkWebSocket {
       .getSession()
       .subscribe("trame.code.lang.server", ([event]) => {
         if (event.type == "close") {
-          console.log("closing", event);
+          console.log("WSLinkWebSocket::closing", event);
           if (this.onclose) {
             this.closeConnections();
           }

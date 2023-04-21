@@ -40,6 +40,8 @@ def load_file(lang, file_path):
 # -----------------------------------------------------------------------------
 
 proc = None
+
+
 async def run(cmd, *args):
     global proc
     proc = await asyncio.create_subprocess_exec(
@@ -52,10 +54,10 @@ async def run(cmd, *args):
 
     async def handle_stdout():
         async for data in proc.stdout:
-            length_prefix = b'Content-Length: '
+            length_prefix = b"Content-Length: "
             if data.startswith(length_prefix):
                 # Read the content length
-                content_length = int(data[len(length_prefix):])
+                content_length = int(data[len(length_prefix) :])
 
                 # Skip over all other headers
                 full_message = data
@@ -68,12 +70,12 @@ async def run(cmd, *args):
                 content = await proc.stdout.read(content_length)
                 full_message += content
 
-                print(f'RECEIVE: {full_message}\n')
-                ctrl.lang_server_response('python', content.decode())
+                # print(f'RECEIVE: {full_message}\n')
+                ctrl.lang_server_response("python", content.decode())
 
     async def handle_stderr():
         async for data in proc.stderr:
-            print('Stderr from language server:', data.decode())
+            print("Stderr from language server:", data.decode())
 
     loop = asyncio.get_event_loop()
     stdout_task = loop.create_task(handle_stdout())
@@ -84,23 +86,23 @@ async def run(cmd, *args):
     stdout_task.cancel()
     stderr_task.cancel()
 
+
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
-loop.create_task(run('pylsp'))
+loop.create_task(run("pylsp"))
 
 
 @ctrl.set("lang_server_request")
 def forward_to_lang_server(language_id, action, payload):
-    print("-" * 60)
-    print(f"LANG({language_id}) - {action}")
+    # print("-" * 60)
+    # print(f"LANG({language_id}) - {action}")
     # print(payload)
-    print("-" * 60)
+    # print("-" * 60)
     if proc is not None:
         payload = payload.encode()
-        prefix = f'Content-Length: {len(payload)}\r\n\r\n'.encode()
-        print(f'SEND: {prefix + payload}\n')
+        prefix = f"Content-Length: {len(payload)}\r\n\r\n".encode()
+        # print(f'SEND: {prefix + payload}\n')
         proc.stdin.write(prefix + payload)
-    # ctrl.lang_server_response(language_id, response_payload)
 
 
 # -----------------------------------------------------------------------------
