@@ -37,5 +37,5 @@ class Editor(HtmlElement):
 
     def send_lang_response(self, lang, data):
         self.server.protocol.publish(
-            "trame.lang.server", dict(type="message", lang=lang, data=data)
+            "trame.code.lang.server", dict(type="message", lang=lang, data=data)
         )
