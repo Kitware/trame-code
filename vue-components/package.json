@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "core-js": "^3.8.3",
-    "monaco-editor": "0.34.1",
-    "monaco-languageclient": "4.0.1",
+    "monaco-editor": "0.36.1",
+    "monaco-languageclient": "5.0.1",
     "net": "^1.0.2",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "vscode-ws-jsonrpc": "2.0.1",

@@ -4,7 +4,7 @@ import { connectToLanguageServers } from "./language-servers";
 
 // vscode must be imported before starting the first editor
 // see: https://github.com/TypeFox/monaco-languageclient/issues/412#issuecomment-1227347426
-import "vscode";
+// import "vscode";
 
 export default {
   name: "VSEditor",
