@@ -40,14 +40,20 @@ class Editor(HtmlElement):
         if name in self._running_language_servers:
             raise RuntimeError(f"Language server for {name} is already running!")
 
-        try:
-            loop = asyncio.get_running_loop()
-        except RuntimeError:
-            # Event loop isn't running. Make one.
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
+        # Need to use `get_event_loop()` here since there may not be a running
+        # event loop (this may be called before the trame server has started).
+        loop = asyncio.get_event_loop()
 
-        loop.create_task(self._start_language_server(name, cmd, *args))
+        task = loop.create_task(self._start_language_server(name, cmd, *args))
+        self._running_language_servers[name] = {
+            'start_task': task,
+        }
+
+        def remove_if_failed(future):
+            if "process" not in self._running_language_servers[name]:
+                self._running_language_servers.pop(name)
+
+        task.add_done_callback(remove_if_failed)
 
     def _send_lang_response(self, lang, data):
         self.server.protocol.publish(
@@ -58,11 +64,17 @@ class Editor(HtmlElement):
         if name not in self._running_language_servers:
             raise RuntimeError(f"No language server for '{name}' is running.")
 
+        if "process" not in self._running_language_servers[name]:
+            # Still starting. Try again soon.
+            loop = asyncio.get_running_loop()
+            loop.call_soon(self._lang_server_request, name, action, payload)
+            return
+
         proc = self._running_language_servers[name]["process"]
 
         payload = payload.encode()
         prefix = f"Content-Length: {len(payload)}\r\n\r\n".encode()
-        # print(f'SEND: {prefix + payload}\n')
+        # print(f'SEND {name}: {prefix + payload}\n')
         proc.stdin.write(prefix + payload)
 
     async def _start_language_server(self, name, cmd, *args):
@@ -92,14 +104,14 @@ class Editor(HtmlElement):
                     content = await proc.stdout.read(content_length)
                     full_message += content
 
-                    # print(f"RECEIVE: {full_message}\n")
+                    # print(f"RECEIVE {name}: {full_message}\n")
                     self._send_lang_response(name, content.decode())
 
         async def handle_stderr():
             async for data in proc.stderr:
                 print(f"Error from language server '{name}':", data.decode())
 
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         stdout_task = loop.create_task(handle_stdout())
         stderr_task = loop.create_task(handle_stderr())
 
