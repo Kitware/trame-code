@@ -39,9 +39,8 @@ export default {
     textmate: {
       type: Object,
     },
-    languageServers: {
-      type: Array,
-      default: () => [],
+    languages: {
+      type: Object,
     },
   },
   watch: {
@@ -112,13 +111,14 @@ export default {
       );
     }
 
-    if (this.languageServers?.length) {
+    const languages = Object.keys(this.languages || {});
+    if (languages.length) {
       MonacoServices.install();
       const masterWS = new WSLinkWebSocket(this.trame);
 
       // Create LanguageClient per language server
-      for (let i = 0; i < this.languageServers.length; i++) {
-        const langId = this.languageServers[i];
+      for (let i = 0; i < languages.length; i++) {
+        const langId = languages[i];
         const langIO = masterWS.createLanguageIO(langId);
         createLanguageClient(langIO);
       }

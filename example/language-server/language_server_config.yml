@@ -1,0 +1,8 @@
+python:
+  cmd:
+    - pylsp
+  config:
+# cmake:
+#   cmd:
+#     - cmake-language-server
+#   config:
