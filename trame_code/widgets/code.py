@@ -1,5 +1,3 @@
-import asyncio
-
 from trame_client.widgets.core import AbstractElement
 from .. import module
 
@@ -44,11 +42,15 @@ class Editor(HtmlElement):
 
         self.__config_key = f"{ref}_config"
 
-        self._language_server_manager = LanguageServerManager(self.server, lang_config)
+        response_callback = self._receive_language_server_response
+        self._language_server_manager = LanguageServerManager(lang_config,
+                                                              response_callback)
 
         manager = self.language_server_manager
         self.server.state[self.__config_key] = manager.client_config
         self._attributes["languages"] = f':languages="{self.__config_key}"'
+
+        self.server.trigger("trame_code_lang_server")(self._send_language_server_message)
 
     @property
     def language_server_manager(self):
@@ -66,3 +68,12 @@ class Editor(HtmlElement):
 
     def stop_all_language_servers(self):
         self.language_server_manager.stop_all_language_servers()
+
+    def _send_language_server_message(self, language, action, payload):
+        self.language_server_manager.send_message(language, action, payload)
+
+    def _receive_language_server_response(self, language, data):
+        self.server.protocol.publish(
+            "trame.code.lang.server",
+            dict(type="message", lang=language, data=data),
+        )
