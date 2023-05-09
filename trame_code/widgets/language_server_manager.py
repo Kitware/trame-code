@@ -184,7 +184,7 @@ class LanguageServerManager:
         language = runner.language
         currently_running = RUNNING_LANGUAGE_SERVERS.setdefault(language, [])
         if runner in currently_running:
-            currently_running.pop(runner)
+            currently_running.pop(currently_running.index(runner))
 
     def _receive_response(self, runner, data):
         # This is called when a runner receives a response
