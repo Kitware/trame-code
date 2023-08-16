@@ -2,6 +2,17 @@
 
 <!--next-version-placeholder-->
 
+## v1.0.1 (2023-08-16)
+
+### Fix
+
+* **docs:** Improve API ([`e125a5b`](https://github.com/Kitware/trame-code/commit/e125a5b03ea7518329adadb082fc4f142fd6f28e))
+
+### Documentation
+
+* **layout:** Use automaticLayout option ([`c416d98`](https://github.com/Kitware/trame-code/commit/c416d98d2827e06d0a281733186016d6dbee98ca))
+* **example:** Cleanup of textmate ([`d2e3eb3`](https://github.com/Kitware/trame-code/commit/d2e3eb322bef5574b2ae5ab0971d43c4a8335cd7))
+
 ## v1.0.0 (2023-04-19)
 ### Feature
 * **release:** Official release ([`080923c`](https://github.com/Kitware/trame-code/commit/080923c5ad7343dac65e192902947ed08f761f57))
