@@ -1,5 +1,10 @@
+"""Module compatible with vue2 and vue3. To use it, you need to install **trame-code**"""
 from trame_client.widgets.core import AbstractElement
 from .. import module
+
+__all__ = [
+    "Editor",
+]
 
 
 class HtmlElement(AbstractElement):
@@ -11,6 +16,23 @@ class HtmlElement(AbstractElement):
 
 # Expose your vue component(s)
 class Editor(HtmlElement):
+    """
+    Monaco Editor component
+
+    Properties:
+
+    :param options:
+    :param value:
+    :param theme:
+    :param language:
+    :param textmate:
+
+    Events:
+
+    :param input:
+
+    """
+
     def __init__(self, **kwargs):
         super().__init__(
             "vs-editor",
