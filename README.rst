@@ -1,6 +1,8 @@
-==========
-trame-code
-==========
+.. |pypi_download| image:: https://img.shields.io/pypi/dm/trame-code
+
+==============================
+trame-code |pypi_download|
+==============================
 
 Widget for Monaco VS code editor for trame
 
