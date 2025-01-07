@@ -9,9 +9,11 @@ import * as monaco from "monaco-editor";
 export default {
   name: "VSEditor",
   props: {
+    modelValue: {
+      type: String,
+    },
     value: {
       type: String,
-      default: "",
     },
     options: {
       type: Object,
@@ -34,8 +36,13 @@ export default {
     },
   },
   watch: {
+    modelValue(v) {
+      if (this.editor && v !== undefined && this.editor.getValue() !== v) {
+        this.editor.setValue(v);
+      }
+    },
     value(v) {
-      if (this.editor) {
+      if (this.editor && v !== undefined && this.editor.getValue() !== v) {
         this.editor.setValue(v);
       }
     },
@@ -102,7 +109,7 @@ export default {
     }
 
     this.editor = monaco.editor.create(this.$el, {
-      value: this.value,
+      value: this.modelValue || this.value,
       language: this.language,
       theme: this.theme,
       ...this.options,
@@ -112,9 +119,17 @@ export default {
       provider.injectCSS();
     }
 
-    this.editor.onDidChangeModelContent(() =>
-      this.$emit("input", this.editor.getValue())
-    );
+    this.lastValue = this.editor.getValue();
+
+    this.editor.onDidChangeModelContent(() => {
+      const newValue = this.editor.getValue();
+      if (this.lastValue === newValue) {
+        return;
+      }
+      this.lastValue = newValue;
+      this.$emit("update:modelValue", newValue);
+      this.$emit("input", newValue);
+    });
   },
   beforeUnmount() {
     this.editor.dispose();
