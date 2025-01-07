@@ -109,7 +109,7 @@ export default {
     }
 
     this.editor = monaco.editor.create(this.$el, {
-      value: this.modelValue,
+      value: this.modelValue || this.value,
       language: this.language,
       theme: this.theme,
       ...this.options,
