@@ -11,7 +11,9 @@ export default {
   props: {
     modelValue: {
       type: String,
-      default: "",
+    },
+    value: {
+      type: String,
     },
     options: {
       type: Object,
@@ -35,7 +37,12 @@ export default {
   },
   watch: {
     modelValue(v) {
-      if (this.editor && this.editor.getValue() !== v) {
+      if (this.editor && v !== undefined && this.editor.getValue() !== v) {
+        this.editor.setValue(v);
+      }
+    },
+    value(v) {
+      if (this.editor && v !== undefined && this.editor.getValue() !== v) {
         this.editor.setValue(v);
       }
     },
@@ -112,9 +119,16 @@ export default {
       provider.injectCSS();
     }
 
+    this.lastValue = this.editor.getValue();
+
     this.editor.onDidChangeModelContent(() => {
-      this.$emit("update:modelValue", this.editor.getValue());
-      this.$emit("input", this.editor.getValue());
+      const newValue = this.editor.getValue();
+      if (this.lastValue === newValue) {
+        return;
+      }
+      this.lastValue = newValue;
+      this.$emit("update:modelValue", newValue);
+      this.$emit("input", newValue);
     });
   },
   beforeUnmount() {

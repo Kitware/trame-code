@@ -1,5 +1,7 @@
 """Module compatible with vue2 and vue3. To use it, you need to install **trame-code**"""
+
 from trame_client.widgets.core import AbstractElement
+
 from .. import module
 
 __all__ = [
@@ -21,8 +23,9 @@ class Editor(HtmlElement):
 
     Properties:
 
-    :param v_model:
     :param options:
+    :param value:
+    :param model_value:
     :param theme:
     :param language:
     :param textmate:
@@ -40,6 +43,8 @@ class Editor(HtmlElement):
         )
         self._attr_names += [
             "options",
+            "value",
+            ("model_value", "modelValue"),
             "theme",
             "language",
             "textmate",
