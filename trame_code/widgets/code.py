@@ -21,8 +21,8 @@ class Editor(HtmlElement):
 
     Properties:
 
+    :param v_model:
     :param options:
-    :param value:
     :param theme:
     :param language:
     :param textmate:
@@ -40,7 +40,6 @@ class Editor(HtmlElement):
         )
         self._attr_names += [
             "options",
-            "value",
             "theme",
             "language",
             "textmate",
