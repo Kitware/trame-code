@@ -30,3 +30,15 @@ Install the python library
 .. code-block:: console
 
     pip install -e .
+
+
+JavaScript dependency
+-----------------------------------------------------------
+
+This Python package bundle the following set of libraries:
+
+* ``monaco-editor@0.37.1``
+* ``vscode-oniguruma@1.7.0``
+* ``vscode-textmate@9.0.0``
+
+If you would like us to upgrade any of those dependencies, `please reach out <https://www.kitware.com/trame/>`_.
