@@ -29,6 +29,12 @@ class Editor(HtmlElement):
     :param theme:
     :param language:
     :param textmate:
+    :param completion: name of a server ``@trigger`` that returns completion
+        items (list of {label, kind, detail, documentation, insertText}) for
+        ``(code, line, column)``. line is 1-based, column 0-based.
+    :param hover: name of a server ``@trigger`` that returns hover content (a
+        markdown string, list of strings, or {contents: [...]}) for
+        ``(code, line, column)``.
 
     Events:
 
@@ -48,6 +54,9 @@ class Editor(HtmlElement):
             "theme",
             "language",
             "textmate",
+            "completion",
+            "hover",
+            ("completion_trigger_characters", "completionTriggerCharacters"),
         ]
         self._event_names += [
             "input",
