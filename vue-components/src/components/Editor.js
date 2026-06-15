@@ -139,10 +139,12 @@ export default {
       }
     },
     registerLanguageProviders() {
-      // Bridge Monaco language features to a Python callback exposed as a trame
-      // trigger. The consumer sets the `completion` / `hover` props to trigger
-      // names and registers the matching server triggers; no client JS needed.
-      // Re-registering is safe: any previous registration is disposed first.
+      // Bridge Monaco language features to a Python callback. The consumer
+      // passes a callable to the `completion` / `hover` props; the widget
+      // registers it as a trigger internally and hands this component the
+      // generated trigger name, which we invoke and await for the result
+      // (Monaco needs the items returned). No client JS needed on the consumer
+      // side. Re-registering is safe: any previous registration is disposed.
       this.disposeLanguageProviders();
       if (!this.completion && !this.hover) {
         return;

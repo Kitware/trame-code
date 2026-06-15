@@ -55,7 +55,6 @@ def _describe(value):
         return type_name
 
 
-@server.trigger("live_complete")
 def live_complete(code_text, line, column):
     """Complete DATASET keys when the cursor is inside a string subscript."""
     lines = code_text.split("\n")
@@ -98,7 +97,7 @@ with SinglePageLayout(server) as layout:
                 v_model=("live_code", INITIAL_CODE),
                 language="python",
                 theme="vs",
-                completion="live_complete",
+                completion=live_complete,
                 # open the list as soon as the key string is entered
                 completion_trigger_characters=("completion_triggers", ['"', "'", "["]),
                 # dict-key completion happens inside a string literal, where

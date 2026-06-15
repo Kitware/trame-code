@@ -29,12 +29,16 @@ class Editor(HtmlElement):
     :param theme:
     :param language:
     :param textmate:
-    :param completion: name of a server ``@trigger`` that returns completion
-        items (list of {label, kind, detail, documentation, insertText}) for
-        ``(code, line, column)``. line is 1-based, column 0-based.
-    :param hover: name of a server ``@trigger`` that returns hover content (a
-        markdown string, list of strings, or {contents: [...]}) for
-        ``(code, line, column)``.
+    :param completion: a callable ``fn(code, line, column)`` returning a list of
+        completion items, each a dict with keys ``label`` (required), ``kind``,
+        ``detail``, ``documentation``, ``insertText``. ``line`` is 1-based,
+        ``column`` 0-based. Registered as a trigger internally so the client can
+        invoke it and receive the returned items (Monaco needs the result back).
+    :param hover: a callable ``fn(code, line, column)`` returning hover content:
+        a markdown string, a list of markdown strings, ``{contents: [...]}``, or
+        ``None``. Registered as a trigger internally like ``completion``.
+    :param completion_trigger_characters: list of characters that open the
+        completion list (defaults to ``["."]`` in the component).
 
     Events:
 
@@ -42,7 +46,7 @@ class Editor(HtmlElement):
 
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, completion=None, hover=None, **kwargs):
         super().__init__(
             "vs-editor",
             **kwargs,
@@ -54,10 +58,21 @@ class Editor(HtmlElement):
             "theme",
             "language",
             "textmate",
-            "completion",
-            "hover",
             ("completion_trigger_characters", "completionTriggerCharacters"),
         ]
         self._event_names += [
             "input",
         ]
+
+        # `completion` / `hover` take a callable receiving (code, line, column).
+        # Monaco pulls results from the provider and needs them returned, so the
+        # callback is registered as a trigger internally and the client invokes
+        # it by name and awaits the returned value.
+        if completion is not None:
+            self._attributes[
+                "completion_trigger"
+            ] = f'completion="{self.ctrl.trigger_name(completion)}"'
+        if hover is not None:
+            self._attributes[
+                "hover_trigger"
+            ] = f'hover="{self.ctrl.trigger_name(hover)}"'
