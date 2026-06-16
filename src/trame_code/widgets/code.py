@@ -69,10 +69,10 @@ class Editor(HtmlElement):
         # callback is registered as a trigger internally and the client invokes
         # it by name and awaits the returned value.
         if completion is not None:
-            self._attributes[
-                "completion_trigger"
-            ] = f'completion="{self.ctrl.trigger_name(completion)}"'
+            self._attributes["completion_trigger"] = (
+                f'completion="{self.ctrl.trigger_name(completion)}"'
+            )
         if hover is not None:
-            self._attributes[
-                "hover_trigger"
-            ] = f'hover="{self.ctrl.trigger_name(hover)}"'
+            self._attributes["hover_trigger"] = (
+                f'hover="{self.ctrl.trigger_name(hover)}"'
+            )

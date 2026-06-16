@@ -1,4 +1,4 @@
-from . import python, moose
+from . import moose, python
 
 ALL_LANGS = dict(languages=[], grammars={}, configs={})
 

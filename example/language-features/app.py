@@ -23,6 +23,7 @@ Run with::
 import jedi
 from trame.app import TrameApp
 from trame.ui.vuetify3 import SinglePageLayout
+
 from trame.widgets import code
 from trame.widgets import vuetify3 as v3
 

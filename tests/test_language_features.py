@@ -3,6 +3,7 @@ def test_completion_and_hover_register_as_triggers():
     surfaces on the element as a trigger-name attribute."""
     from trame.app import get_server
     from trame.ui.html import DivLayout
+
     from trame.widgets import code
 
     def on_complete(code_text, line, column):

@@ -1,8 +1,9 @@
+from pathlib import Path
+
 from trame.app import get_server
 from trame.ui.vuetify import SinglePageWithDrawerLayout
-from trame.widgets import vuetify, code
 
-from pathlib import Path
+from trame.widgets import code, vuetify
 
 # -----------------------------------------------------------------------------
 # Trame setup
@@ -85,15 +86,14 @@ with SinglePageWithDrawerLayout(server) as layout:
             update_active=(load_file, "[$event]"),
         )
 
-    with layout.content:
-        with vuetify.VContainer(fluid=True, classes="fill-height pa-0"):
-            editor = code.Editor(
-                style="width: 100%",
-                value=("editor_content", ""),
-                options=("editor_options", {}),
-                language=("editor_lang", "plaintext"),
-                theme=("editor_theme", "vs-dark"),
-            )
+    with layout.content, vuetify.VContainer(fluid=True, classes="fill-height pa-0"):
+        editor = code.Editor(
+            style="width: 100%",
+            value=("editor_content", ""),
+            options=("editor_options", {}),
+            language=("editor_lang", "plaintext"),
+            theme=("editor_theme", "vs-dark"),
+        )
 
 
 # -----------------------------------------------------------------------------

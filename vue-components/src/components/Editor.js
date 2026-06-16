@@ -103,7 +103,7 @@ export default {
           languages,
           grammars,
           configs,
-          true
+          true,
         );
       }
     },
@@ -120,7 +120,7 @@ export default {
       registerLanguages(
         languages,
         (v) => this.provider.fetchLanguageInfo(v),
-        monaco
+        monaco,
       );
       if (inject) {
         this.provider.injectCSS();
@@ -244,7 +244,7 @@ export default {
                 : undefined;
               return { range, contents };
             },
-          }
+          },
         );
       }
     },
@@ -256,7 +256,7 @@ export default {
         this.textmate.languages,
         this.textmate.grammars,
         this.textmate.configs,
-        false
+        false,
       );
     }
 

@@ -69,7 +69,7 @@ export class SimpleLanguageInfoProvider {
       this.monaco.languages.getEncodedLanguageId(language);
     return this.tokensProviderCache.createEncodedTokensProvider(
       scopeName,
-      encodedLanguageId
+      encodedLanguageId,
     );
   }
 
@@ -116,7 +116,7 @@ class TokensProviderCache {
       .loadGrammarWithConfiguration(
         scopeName,
         encodedLanguageId,
-        grammarConfiguration
+        grammarConfiguration,
       )
       .then((grammar) => {
         if (grammar) {
@@ -162,9 +162,8 @@ export function registerLanguages(languages, fetchLanguageInfo, monaco) {
 
     // Lazy-load the tokens provider and configuration data.
     monaco.languages.onLanguage(languageId, async () => {
-      const { tokensProvider, configuration } = await fetchLanguageInfo(
-        languageId
-      );
+      const { tokensProvider, configuration } =
+        await fetchLanguageInfo(languageId);
 
       if (tokensProvider != null) {
         monaco.languages.setTokensProvider(languageId, tokensProvider);

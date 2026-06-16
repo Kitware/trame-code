@@ -1,8 +1,9 @@
+from pathlib import Path
+
 from trame.app import get_server
 from trame.ui.vuetify3 import SinglePageWithDrawerLayout
-from trame.widgets import vuetify3, code
 
-from pathlib import Path
+from trame.widgets import code, vuetify3
 
 # -----------------------------------------------------------------------------
 # Trame setup

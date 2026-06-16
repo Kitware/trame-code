@@ -65,6 +65,6 @@ Promise.all(values.map((v) => v())).then((results) => {
     resolvedMap[keys[i]] = results[i];
   }
   results.forEach((v) =>
-    registerTextMateTheme(toTextmateTheme(v, resolvedMap))
+    registerTextMateTheme(toTextmateTheme(v, resolvedMap)),
   );
 });

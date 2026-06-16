@@ -1,4 +1,4 @@
-trame
-trame-vuetify
-trame-code
 jedi
+trame
+trame-code
+trame-vuetify
