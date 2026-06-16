@@ -1,0 +1,56 @@
+[project]
+name = "trame-code"
+version = "1.0.2"
+description = "Widget for Monaco VS code editor for trame"
+authors = [
+    {name = "Kitware Inc."},
+]
+dependencies = [
+    "trame_client",
+]
+requires-python = ">=3.9"
+readme = "README.rst"
+license = {text = "MIT License"}
+keywords = ["Python", "Interactive", "Web", "Application", "Framework"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: JavaScript",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+    "pytest >=6",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build]
+artifacts = [
+    "trame_code/module/serve/**",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["trame_code", "trame"]
+
+[tool.semantic_release]
+version_toml = [
+    "pyproject.toml:project.version",
+]
+build_command = """
+    python -m pip install uv
+    uv build
+"""
+
+[tool.semantic_release.publish]
+dist_glob_patterns = ["dist/*"]
+upload_to_vcs_release = true
