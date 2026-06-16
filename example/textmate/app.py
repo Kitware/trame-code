@@ -1,14 +1,14 @@
-from trame.app import get_server
-from trame.ui.vuetify import SinglePageWithDrawerLayout
-from trame.widgets import vuetify, code
-
+import sys
 from pathlib import Path
 
-import sys
+from trame.app import get_server
+from trame.ui.vuetify import SinglePageWithDrawerLayout
+
+from trame.widgets import code, vuetify
 
 sys.path.append(str(Path(__file__).parent.absolute()))
 
-import langs  # noqa: E402
+import langs
 
 # -----------------------------------------------------------------------------
 # Trame setup
@@ -79,25 +79,21 @@ with SinglePageWithDrawerLayout(server) as layout:
             style="max-width: 200px;",
         )
 
-    with layout.drawer:
-        with vuetify.VCol():
-            vuetify.VBtn("Python", classes="mb-2", block=True, click=load_python)
-            vuetify.VBtn("Moose", classes="mb-2", block=True, click=load_moose)
-            vuetify.VBtn(
-                "JavaScript", classes="mb-2", block=True, click=load_javascript
-            )
-            vuetify.VBtn("Latex", classes="mb-2", block=True, click=load_latex)
+    with layout.drawer, vuetify.VCol():
+        vuetify.VBtn("Python", classes="mb-2", block=True, click=load_python)
+        vuetify.VBtn("Moose", classes="mb-2", block=True, click=load_moose)
+        vuetify.VBtn("JavaScript", classes="mb-2", block=True, click=load_javascript)
+        vuetify.VBtn("Latex", classes="mb-2", block=True, click=load_latex)
 
-    with layout.content:
-        with vuetify.VContainer(fluid=True, classes="fill-height pa-0"):
-            editor = code.Editor(
-                style="width: 100%",
-                value=("editor_content", ""),
-                options=("editor_options", {"automaticLayout": True}),
-                language=("editor_lang", "plaintext"),
-                theme=("editor_theme", "vs-dark"),
-                textmate=("editor_textmate", None),
-            )
+    with layout.content, vuetify.VContainer(fluid=True, classes="fill-height pa-0"):
+        editor = code.Editor(
+            style="width: 100%",
+            value=("editor_content", ""),
+            options=("editor_options", {"automaticLayout": True}),
+            language=("editor_lang", "plaintext"),
+            theme=("editor_theme", "vs-dark"),
+            textmate=("editor_textmate", None),
+        )
 
 
 # -----------------------------------------------------------------------------
