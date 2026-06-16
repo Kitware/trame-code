@@ -20,7 +20,7 @@ export default {
         },
       },
     },
-    outDir: "../trame_code/module/serve",
+    outDir: "../src/trame_code/module/serve",
     assetsDir: ".",
     // sourcemap: true,
   },
