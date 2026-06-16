@@ -36,11 +36,11 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build]
 artifacts = [
-    "trame_code/module/serve/**",
+    "src/trame_code/module/serve/**",
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["trame_code", "trame"]
+packages = ["src/trame_code", "src/trame"]
 
 [tool.semantic_release]
 version_toml = [
