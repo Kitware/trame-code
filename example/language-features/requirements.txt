@@ -1,0 +1,4 @@
+trame
+trame-vuetify
+trame-code
+jedi

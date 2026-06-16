@@ -6,6 +6,27 @@ import {
 
 import * as monaco from "monaco-editor";
 
+// Map a normalized completion-kind string to a Monaco CompletionItemKind.
+function completionItemKind(kind) {
+  const K = monaco.languages.CompletionItemKind;
+  const map = {
+    function: K.Function,
+    method: K.Method,
+    class: K.Class,
+    instance: K.Variable,
+    variable: K.Variable,
+    module: K.Module,
+    keyword: K.Keyword,
+    statement: K.Snippet,
+    param: K.Variable,
+    property: K.Property,
+    field: K.Field,
+    constant: K.Constant,
+    path: K.File,
+  };
+  return map[kind] || K.Text;
+}
+
 export default {
   name: "VSEditor",
   props: {
@@ -34,6 +55,16 @@ export default {
     textmate: {
       type: Object,
     },
+    completion: {
+      type: String,
+    },
+    hover: {
+      type: String,
+    },
+    completionTriggerCharacters: {
+      type: Array,
+      default: () => ["."],
+    },
   },
   watch: {
     modelValue(v) {
@@ -54,6 +85,7 @@ export default {
     language(lang) {
       if (this.editor) {
         monaco.editor.setModelLanguage(this.editor.getModel(), lang);
+        this.registerLanguageProviders();
       }
     },
     theme(theme) {
@@ -96,6 +128,126 @@ export default {
 
       return this.provider;
     },
+    disposeLanguageProviders() {
+      if (this._completionProvider) {
+        this._completionProvider.dispose();
+        this._completionProvider = null;
+      }
+      if (this._hoverProvider) {
+        this._hoverProvider.dispose();
+        this._hoverProvider = null;
+      }
+    },
+    registerLanguageProviders() {
+      // Bridge Monaco language features to a Python callback. The consumer
+      // passes a callable to the `completion` / `hover` props; the widget
+      // registers it as a trigger internally and hands this component the
+      // generated trigger name, which we invoke and await for the result
+      // (Monaco needs the items returned). No client JS needed on the consumer
+      // side. Re-registering is safe: any previous registration is disposed.
+      this.disposeLanguageProviders();
+      if (!this.completion && !this.hover) {
+        return;
+      }
+      // Monaco only runs language features for a registered language. When no
+      // textmate grammar registered it (e.g. a plain language= editor), register
+      // the id here so completion/hover providers are actually consulted.
+      const known = monaco.languages
+        .getLanguages()
+        .some((l) => l.id === this.language);
+      if (this.language && !known) {
+        monaco.languages.register({ id: this.language });
+      }
+      const self = this;
+      if (this.completion) {
+        this._completionProvider =
+          monaco.languages.registerCompletionItemProvider(this.language, {
+            triggerCharacters: this.completionTriggerCharacters,
+            async provideCompletionItems(model, position, context, token) {
+              if (!window.trame || !window.trame.trigger) {
+                return { suggestions: [] };
+              }
+              let items = [];
+              try {
+                items = await window.trame.trigger(self.completion, [
+                  model.getValue(),
+                  position.lineNumber,
+                  position.column - 1,
+                ]);
+              } catch (e) {
+                items = [];
+              }
+              if (token && token.isCancellationRequested) {
+                return { suggestions: [] };
+              }
+              if (!items) items = [];
+              const word = model.getWordUntilPosition(position);
+              const range = {
+                startLineNumber: position.lineNumber,
+                endLineNumber: position.lineNumber,
+                startColumn: word.startColumn,
+                endColumn: word.endColumn,
+              };
+              return {
+                suggestions: items.map((it) => ({
+                  label: it.label,
+                  kind: completionItemKind(it.kind),
+                  detail: it.detail || "",
+                  documentation: it.documentation || undefined,
+                  insertText: it.insertText || it.label,
+                  range,
+                })),
+              };
+            },
+          });
+      }
+      if (this.hover) {
+        this._hoverProvider = monaco.languages.registerHoverProvider(
+          this.language,
+          {
+            async provideHover(model, position, token) {
+              if (!window.trame || !window.trame.trigger) {
+                return null;
+              }
+              let res = null;
+              try {
+                res = await window.trame.trigger(self.hover, [
+                  model.getValue(),
+                  position.lineNumber,
+                  position.column - 1,
+                ]);
+              } catch (e) {
+                res = null;
+              }
+              if (token && token.isCancellationRequested) {
+                return null;
+              }
+              if (!res) return null;
+              // Accept a markdown string, an array of strings, or { contents: [...] }.
+              let contents = [];
+              if (typeof res === "string") {
+                contents = [{ value: res }];
+              } else if (Array.isArray(res)) {
+                contents = res.map((v) => ({ value: v }));
+              } else if (res.contents) {
+                contents = res.contents.map((v) => ({ value: v }));
+              }
+              if (!contents.length) return null;
+              const word = model.getWordAtPosition(position);
+              const range = word
+                ? {
+                    startLineNumber: position.lineNumber,
+                    endLineNumber: position.lineNumber,
+                    startColumn: word.startColumn,
+                    endColumn: word.endColumn,
+                  }
+                : undefined;
+              return { range, contents };
+            },
+          }
+        );
+      }
+    },
   },
   mounted() {
     let provider = null;
@@ -130,8 +282,11 @@ export default {
       this.$emit("update:modelValue", newValue);
       this.$emit("input", newValue);
     });
+
+    this.registerLanguageProviders();
   },
   beforeUnmount() {
+    this.disposeLanguageProviders();
     this.editor.dispose();
   },
   template: `<div style="width: 100%;height: 100%;padding: 0;margin: 0;"></div>`,
