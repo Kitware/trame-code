@@ -9,18 +9,22 @@ on:
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
+    env:
+      UV_PYTHON: "3.12"
     steps:
-      - uses: actions/checkout@v2
-
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v6
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
         with:
-          python-version: "3.9"
+          version: "0.8.12"
+          enable-cache: true
+      - name: Install the project
+        run: uv sync --all-extras --dev
 
       # Install and run pre-commit
       - run: |
-          pip install pre-commit
-          pre-commit install
-          pre-commit run --all-files
+          uv run pre-commit install
+          uv run pre-commit run --all-files
 
   pytest:
     name: Pytest ${{ matrix.config.name }}
@@ -28,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.9]
+        python-version: ["3.12"]
         config:
         - {
             name: "Linux",
@@ -49,30 +53,33 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
-
+      uses: actions/checkout@v6
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
-
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+      with:
+        version: "0.8.12"
+        enable-cache: true
     - name: Install and Run Tests
       run: |
-        pip install .
-        pip install -r tests/requirements.txt
-        pytest -s ./tests
+        uv sync --dev
+        uv pip install -r tests/requirements.txt
+        uv run pytest -s ./tests
 
   test-npm-build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
 
       - name: Set Up Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
-          node-version: 14
+          node-version: 24
 
       - name: Build Vue Components
         run: |
@@ -87,18 +94,23 @@ jobs:
       test-npm-build,
     ]
     runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write # IMPORTANT: mandatory for trusted publishing
+      contents: write # IMPORTANT: mandatory for making GitHub Releases
+      attestations: write # IMPORTANT: mandatory to attest build provenance
     if: github.event_name == 'push'
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Set Up Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
-          node-version: 14
+          node-version: 24
 
       - name: Build Vue Components
         run: |
@@ -107,8 +119,17 @@ jobs:
           npm run build
 
       - name: Python Semantic Release
-        uses: relekang/python-semantic-release@v7.34.6
+        id: release
+        uses: python-semantic-release/python-semantic-release@v10.5.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          repository_username: __token__
-          repository_password: ${{ secrets.PYPI_API_TOKEN }}
+
+      - name: Generate artifact attestation for sdist and wheel
+        if: steps.release.outputs.released == 'true'
+        uses: actions/attest-build-provenance@v4.1.0
+        with:
+          subject-path: "dist/*"
+
+      # https://docs.pypi.org/trusted-publishers/using-a-publisher/
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        if: steps.release.outputs.released == 'true'
