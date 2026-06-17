@@ -6,6 +6,15 @@ trame-code |pypi_download|
 
 Widget for Monaco VS code editor for trame
 
+The editor can surface language features (autocomplete and hover
+documentation) from your own server-side callbacks: pass ``completion``
+and ``hover`` callables to the widget. The example below shows Python/VTK
+completion and a hover docstring driven entirely from those callbacks.
+
+.. image:: https://raw.githubusercontent.com/Kitware/trame-code/master/docs/completion-hover.png
+   :alt: Monaco editor showing Python/VTK completion and a hover docstring
+   :align: center
+
 
 License
 -----------------------------------------------------------
