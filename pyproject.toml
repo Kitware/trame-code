@@ -1,6 +1,6 @@
 [project]
 name = "trame-code"
-version = "1.1.0"
+version = "1.1.1"
 description = "Widget for Monaco VS code editor for trame"
 authors = [
     {name = "Kitware Inc."},
