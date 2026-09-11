@@ -1,4 +1,4 @@
-.. |pypi_download| image:: https://img.shields.io/pypi/dm/trame-code
+.. |pypi_download| image:: https://kitware.github.io/trame/downloads/trame-code.svg
 
 ==============================
 trame-code |pypi_download|
