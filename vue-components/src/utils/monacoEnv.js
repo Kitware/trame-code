@@ -18,8 +18,16 @@ const LABEL_MAPPER = {
   js: "ts",
 };
 
+// The server serves the bundle from a versioned directory and tells the client
+// which one: through the plugin options for vue, a widget prop for react.
+let workerBaseUrl = "";
+
+function setServeDirectory(serveDirectory) {
+  workerBaseUrl = `${serveDirectory}/monacoeditorwork/`;
+}
+
 function DEFAULT_URL_MAPPER(v) {
-  return `__trame_code/monacoeditorwork/${v}.worker.bundle.js`;
+  return `${workerBaseUrl}${v}.worker.bundle.js`;
 }
 
 function getWorker(_workerId, label) {
@@ -37,6 +45,7 @@ function updateUrlMapper(key, value) {
 }
 
 export const MonacoEnvironment = {
+  setServeDirectory,
   updateLabelMapper,
   updateUrlMapper,
   getWorker,

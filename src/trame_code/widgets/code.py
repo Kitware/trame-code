@@ -51,28 +51,30 @@ class Editor(HtmlElement):
             "vs-editor",
             **kwargs,
         )
-        self._attr_names += [
+        self.props += [
             "options",
             "value",
-            ("model_value", "modelValue"),
             "theme",
             "language",
             "textmate",
             ("completion_trigger_characters", "completionTriggerCharacters"),
+            "completion",
+            "hover",
         ]
-        self._event_names += [
-            "input",
-        ]
+        if self.server.client_type == "react":
+            # React has no v-model: binding is an explicit value/on_change pair.
+            self.events += [("on_change", "onChange")]
+            # react_use takes no plugin options, so the serve directory that vue
+            # receives through vue_use comes in as a prop.
+            self.props += [("serve_directory", "serveDirectory")]
+            self.serve_directory = module.serve_directory
+        else:
+            self.props += [("model_value", "modelValue")]
+            self.events += ["input"]
 
-        # `completion` / `hover` take a callable receiving (code, line, column).
-        # Monaco pulls results from the provider and needs them returned, so the
-        # callback is registered as a trigger internally and the client invokes
-        # it by name and awaits the returned value.
+        # Monaco pulls completion/hover results and needs them returned, so each
+        # callable is registered as a trigger and the client invokes it by name.
         if completion is not None:
-            self._attributes["completion_trigger"] = (
-                f'completion="{self.ctrl.trigger_name(completion)}"'
-            )
+            self.completion = self.ctrl.trigger_name(completion)
         if hover is not None:
-            self._attributes["hover_trigger"] = (
-                f'hover="{self.ctrl.trigger_name(hover)}"'
-            )
+            self.hover = self.ctrl.trigger_name(hover)

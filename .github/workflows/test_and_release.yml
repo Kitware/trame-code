@@ -78,6 +78,14 @@ jobs:
           npm i
           npm run build
 
+      # After the vue build: it runs with --emptyOutDir and both bundles share
+      # the serve directory.
+      - name: Build React Components
+        run: |
+          cd react-components
+          npm i
+          npm run build
+
   release:
     needs: [pre-commit, pytest, test-npm-build]
     runs-on: ubuntu-latest
@@ -102,6 +110,12 @@ jobs:
       - name: Build Vue Components
         run: |
           cd vue-components
+          npm i
+          npm run build
+
+      - name: Build React Components
+        run: |
+          cd react-components
           npm i
           npm run build
 
