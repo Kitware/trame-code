@@ -19,7 +19,7 @@ scripts = [f"{serve_directory}/trame-code.umd.js"]
 styles = [f"{serve_directory}/style.css"]
 
 # List of Vue plugins to install/load
-vue_use = ["trame_code"]
+vue_use = [("trame_code", {"serveDirectory": serve_directory})]
 
 # Uncomment to add entries to the shared state
 # state = {}
