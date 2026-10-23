@@ -65,8 +65,18 @@ export default {
       type: Array,
       default: () => ["."],
     },
+    markers: {
+      type: Array,
+      default: () => [],
+    },
   },
   watch: {
+    markers: {
+      deep: true,
+      handler() {
+        this.applyMarkers();
+      },
+    },
     modelValue(v) {
       if (this.editor && v !== undefined && this.editor.getValue() !== v) {
         this.editor.setValue(v);
@@ -109,6 +119,33 @@ export default {
     },
   },
   methods: {
+    applyMarkers() {
+      const model = this.editor && this.editor.getModel();
+      if (!model) {
+        return;
+      }
+      const severities = {
+        error: monaco.MarkerSeverity.Error,
+        warning: monaco.MarkerSeverity.Warning,
+        info: monaco.MarkerSeverity.Info,
+        hint: monaco.MarkerSeverity.Hint,
+      };
+      monaco.editor.setModelMarkers(
+        model,
+        "trame",
+        (this.markers || []).map((m) => {
+          const line = Math.max(1, Math.min(m.line, model.getLineCount()));
+          return {
+            startLineNumber: line,
+            endLineNumber: line,
+            startColumn: m.column || 1,
+            endColumn: m.endColumn || model.getLineMaxColumn(line),
+            message: m.message,
+            severity: severities[m.severity || "error"],
+          };
+        }),
+      );
+    },
     registerTextmateLanguageDefinitions(languages, grammars, configs, inject) {
       this.provider = new SimpleLanguageInfoProvider({
         monaco,
@@ -266,6 +303,8 @@ export default {
       theme: this.theme,
       ...this.options,
     });
+
+    this.applyMarkers();
 
     if (provider) {
       provider.injectCSS();
