@@ -28,3 +28,17 @@ def test_completion_and_hover_register_as_triggers():
     ctrl = server.controller
     assert ctrl.trigger_fn(server.trigger_name(on_complete)) is on_complete
     assert ctrl.trigger_fn(server.trigger_name(on_hover)) is on_hover
+
+
+def test_markers_bind_as_a_prop():
+    """Markers are passed through to the editor so a host app can mark lines."""
+    from trame.app import get_server
+    from trame.ui.html import DivLayout
+
+    from trame.widgets import code
+
+    server = get_server("test_markers")
+    with DivLayout(server):
+        editor = code.Editor(language="python", markers=("diagnostics",))
+
+    assert ':markers="diagnostics"' in editor.html
