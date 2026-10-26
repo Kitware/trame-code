@@ -19,7 +19,16 @@ interface EditorProps {
   hover?: string;
   completionTriggerCharacters?: string[];
   serveDirectory?: string;
+  markers?: EditorMarker[];
   onChange?: (value: string) => void;
+}
+
+interface EditorMarker {
+  line: number;
+  message: string;
+  column?: number;
+  endColumn?: number;
+  severity?: "error" | "warning" | "info" | "hint";
 }
 
 function completionItemKind(kind?: string) {
@@ -58,6 +67,7 @@ export default function Editor({
   hover,
   completionTriggerCharacters = ["."],
   serveDirectory,
+  markers,
   onChange,
 }: EditorProps) {
   if (serveDirectory) {
@@ -261,6 +271,35 @@ export default function Editor({
     registerLanguageProviders(language);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [language]);
+
+  useEffect(() => {
+    const editor = editorRef.current;
+    const model = editor?.getModel();
+    if (!model) {
+      return;
+    }
+    const severities = {
+      error: monaco.MarkerSeverity.Error,
+      warning: monaco.MarkerSeverity.Warning,
+      info: monaco.MarkerSeverity.Info,
+      hint: monaco.MarkerSeverity.Hint,
+    };
+    monaco.editor.setModelMarkers(
+      model,
+      "trame",
+      (markers || []).map((m) => {
+        const line = Math.max(1, Math.min(m.line, model.getLineCount()));
+        return {
+          startLineNumber: line,
+          endLineNumber: line,
+          startColumn: m.column ?? 1,
+          endColumn: m.endColumn ?? model.getLineMaxColumn(line),
+          message: m.message,
+          severity: severities[m.severity || "error"],
+        };
+      }),
+    );
+  }, [markers]);
 
   useEffect(() => {
     editorRef.current?.updateOptions({ theme });

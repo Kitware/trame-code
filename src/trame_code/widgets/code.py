@@ -60,6 +60,7 @@ class Editor(HtmlElement):
             ("completion_trigger_characters", "completionTriggerCharacters"),
             "completion",
             "hover",
+            "markers",
         ]
         if self.server.client_type == "react":
             # React has no v-model: binding is an explicit value/on_change pair.
